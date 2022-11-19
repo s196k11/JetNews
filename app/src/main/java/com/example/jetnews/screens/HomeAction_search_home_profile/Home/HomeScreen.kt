@@ -48,6 +48,7 @@ import com.example.jetnews.Model.Article
 import com.example.jetnews.Model.News
 import com.example.jetnews.Model.UserInfoData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
@@ -78,6 +79,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
     } else {
         mainViewModel.getTopHeadlines(country = "in", category = clicked.value)
     }
+
 
 
 
@@ -167,7 +169,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
                                 }
                             }
 
-                            Log.d("NewsF",mainViewModel.fNews.value.toString())
+                            Log.d("NewsF",mainViewModel.userData.value.toString())
 
 //                        navController.navigate(JetScreens.DetailScreen.name + "/title/desc/Imageurl/content")
 

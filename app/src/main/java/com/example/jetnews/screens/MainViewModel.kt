@@ -45,7 +45,7 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
 
     val clickedNews = mutableStateOf<Article?>(null)
     //getting user data
-    val fNews = mutableStateOf<UserInfoData?>(UserInfoData())
+    val userData = mutableStateOf<UserInfoData?>(UserInfoData())
     //getting article from firebase
     val articleFire = mutableStateOf<List<Article>?>(emptyList())
 
@@ -53,12 +53,12 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
 //        getRealtimeData(database = database)
     }
 
-    private fun getRealtimeData(database:DatabaseReference){
+    fun getRealtimeData(database:DatabaseReference){
         val dataListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val data = snapshot.getValue<UserInfoData>()
                 Log.d("dataFire",data!!.toString())
-                fNews.value = data
+                userData.value = data
             }
 
             override fun onCancelled(error: DatabaseError) {

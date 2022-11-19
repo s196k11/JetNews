@@ -6,5 +6,5 @@ data class UserInfoData(
     val aboutMe:String?= null,
     val country:String? = null,
     val language:String?= null,
-    val article: List<Article>? = null
+    val article: List<Article>? = emptyList()
 )

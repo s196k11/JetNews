@@ -206,7 +206,7 @@ fun DetailScreen(
                         .clickable { navController.navigate(JetScreens.HomeScreen.name) { navController.popBackStack() } }
                 )
 
-                Log.d("Articles ","  ${mainViewModel.fNews.value.toString()}")
+                Log.d("Articles ","  ${mainViewModel.userData.value.toString()}")
 
                 for (i in mainViewModel.articleFire.value!!) {
 

@@ -78,14 +78,14 @@ fun MyNewsScreen(navController:NavHostController,mainViewModel: MainViewModel){
 
         val t = remember {mutableStateOf("")}
 
-        val database = FirebaseDatabase.getInstance().getReference("md7196967")
-        database.get().addOnSuccessListener {
-            t.value = it.value.toString()
-        }
+//        val database = FirebaseDatabase.getInstance().getReference("md7196967")
+//        database.get().addOnSuccessListener {
+//            t.value = it.value.toString()
+//        }
+////
 //
-
-        val l = t.value.slice(1 downTo -1)
-        Text(text = l)
+//        val l = t.value.slice(1 downTo -1)
+//        Text(text = l)
 
 //        val dataListener = object : ValueEventListener {
 //            override fun onDataChange(snapshot: DataSnapshot) {
@@ -102,5 +102,8 @@ fun MyNewsScreen(navController:NavHostController,mainViewModel: MainViewModel){
 //        Text(text = t.value)
 //        Text(text = "Article")
 //        Text(text = mainViewModel.fNews.value.toString())
+
+        t.value = mainViewModel.userData.value.toString()
+        Text(text = t.value)
     }
 }
