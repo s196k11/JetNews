@@ -3,6 +3,8 @@ package com.example.jetnews.screens.HomeAction_search_home_profile.MyNews
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.jetnews.Data.DataOrException
 import com.example.jetnews.Model.UserInfoData
+import com.example.jetnews.screens.HomeAction_search_home_profile.Home.NewsBox
 import com.example.jetnews.screens.MainViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,18 +47,18 @@ fun MyNewsScreen(navController:NavHostController,mainViewModel: MainViewModel){
     val text = remember {mutableStateOf("")}
 
 
-    Column(verticalArrangement = Arrangement.Center,
+    Column(verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
 
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.fillMaxWidth().padding(9.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(value = text.value,
                 onValueChange = { text.value = it },
-                modifier = Modifier.fillMaxWidth(0.87f),
+                modifier = Modifier.fillMaxWidth().shadow(elevation = 2.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = Color.LightGray.copy(
                     alpha = 0.5f),
-                    unfocusedBorderColor = Color.LightGray.copy(alpha = 0.5f),
+                    unfocusedBorderColor = Color.DarkGray,
                     backgroundColor = Color.White.copy(alpha = 0.5f)),
                 shape = CircleShape,
                 textStyle = TextStyle(fontSize = 20.sp),
@@ -76,34 +80,17 @@ fun MyNewsScreen(navController:NavHostController,mainViewModel: MainViewModel){
             )
         }
 
-        val t = remember {mutableStateOf("")}
 
-//        val database = FirebaseDatabase.getInstance().getReference("md7196967")
-//        database.get().addOnSuccessListener {
-//            t.value = it.value.toString()
-//        }
-////
-//
-//        val l = t.value.slice(1 downTo -1)
-//        Text(text = l)
+        LazyColumn{
+            items(mainViewModel.articleFire){art ->
 
-//        val dataListener = object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val data = snapshot.value
-//                t.value = data.toString()
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d("onCancelled",error.toException().toString())
-//            }
-//        }
-//        database.addValueEventListener(dataListener)
-
-//        Text(text = t.value)
-//        Text(text = "Article")
-//        Text(text = mainViewModel.fNews.value.toString())
-
-        t.value = mainViewModel.userData.value.toString()
-        Text(text = t.value)
+                if (art.title.toString() != "null") {
+                    NewsBox(imageURL = art.urlToImage.toString(),
+                        title = art.title.toString(),
+                        desc = art.description.toString(),
+                        content = art.content.toString()) {}
+                }
+            }
+        }
     }
 }

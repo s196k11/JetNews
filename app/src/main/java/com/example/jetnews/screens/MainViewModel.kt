@@ -2,12 +2,10 @@ package com.example.jetnews.screens
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jetnews.Data.DataOrException
 import com.example.jetnews.Model.Article
 import com.example.jetnews.Model.News
 import com.example.jetnews.Model.UserInfoData
@@ -19,11 +17,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.Objects
@@ -47,10 +43,12 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
     //getting user data
     val userData = mutableStateOf<UserInfoData?>(UserInfoData())
     //getting article from firebase
-    val articleFire = mutableStateOf<List<Article>?>(emptyList())
+//    val articleFire = mutableStateOf<List<Article>?>(emptyList())
+    val articleFire:MutableList<Article> = mutableListOf()
+
 
     init {
-//        getRealtimeData(database = database)
+        getRealtimeData(database = database)
     }
 
     fun getRealtimeData(database:DatabaseReference){
@@ -59,6 +57,9 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
                 val data = snapshot.getValue<UserInfoData>()
                 Log.d("dataFire",data!!.toString())
                 userData.value = data
+                for (i in userData.value!!.article!!.values){
+                    articleFire.add(i)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

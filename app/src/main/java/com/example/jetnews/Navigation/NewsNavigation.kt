@@ -104,7 +104,7 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
         }
 
         composable(JetScreens.AccountScreen.name){
-            AccountScreen(navController = navController)
+            AccountScreen(navController = navController,mainViewModel = mainViewModel)
         }
 
 //        composable(JetScreens.DetailScreen.name + "/{title}/{desc}/{imageURL}/{content}",

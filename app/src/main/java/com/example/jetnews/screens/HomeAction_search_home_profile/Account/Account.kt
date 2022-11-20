@@ -35,10 +35,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jetnews.Navigation.JetScreens
+import com.example.jetnews.screens.MainViewModel
+import java.time.format.TextStyle
 
-@Preview(showSystemUi = true)
+
 @Composable
-fun AccountScreen(navController:NavHostController = rememberNavController()){
+fun AccountScreen(navController:NavHostController = rememberNavController(),mainViewModel: MainViewModel){
     val conf = LocalConfiguration.current
     val screenH = conf.screenHeightDp.dp
 
@@ -122,9 +124,9 @@ fun AccountScreen(navController:NavHostController = rememberNavController()){
 
         Log.d("image Uri", imageUri.toString())
 
-        Text(text = "UserName", fontWeight = FontWeight.SemiBold, fontSize = 25.sp)
+        Text(text = mainViewModel.userData.value?.userName.toString(), fontWeight = FontWeight.SemiBold, fontSize = 25.sp)
 
-        TextBox(title = "About Me",text = "hey I am xyz from xzy country alkjdlj lja fklajs klaskdfjkasdjf lsd sj falsjflk ajfk ff d   s la ljalk j kl jkldjf kldjf laskjf klskl jfdsl  fklasjfl klsaj fklajf adsakljasjf asjfjdsklasj")
+        TextBox(title = "About Me",text = mainViewModel.userData.value?.aboutMe.toString())
 
     }
 }
@@ -134,7 +136,7 @@ fun AccountScreen(navController:NavHostController = rememberNavController()){
 fun TextBox(title:String,text:String){
     Row(modifier = Modifier.fillMaxWidth().height(intrinsicSize = IntrinsicSize.Max)) {
         Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.Start) {
-            Text(text = title)
+            Text(text = title, fontWeight = FontWeight.Bold)
             Surface(modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max),

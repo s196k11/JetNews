@@ -31,10 +31,12 @@ import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.screens.MainViewModel
 import android.util.Base64
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
@@ -184,6 +186,7 @@ fun DetailScreen(
         query = mainViewModel.clickedNews.value?.title.toString().slice(1..17))
 
     val news = mainViewModel.news.observeAsState().value
+    val added = remember {mutableStateOf(false)}
 
     val currentUser = auth.currentUser?.email.toString().split("@")[0]
 
@@ -208,36 +211,19 @@ fun DetailScreen(
 
                 Log.d("Articles ","  ${mainViewModel.userData.value.toString()}")
 
-                for (i in mainViewModel.articleFire.value!!) {
+//
 
-                    if (i?.title != null){
-                        if (mainViewModel.clickedNews.value?.title.toString() == i?.title) {
-                            Icon(painter = painterResource(id = R.drawable.bookmark_added),
-                                contentDescription = null,
-                                tint = Color.Unspecified,
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .padding(4.dp)
-                            )
-                        } else {
-                            Icon(painter = painterResource(id = R.drawable.bookmark1),
-                                contentDescription = null, modifier = Modifier
-                                    .size(30.dp)
-                                    .padding(4.dp)
-                                    .clickable { mainViewModel.pushListOfArticle(user = currentUser,art = mainViewModel.clickedNews.value!!) },
-                                tint = Color.Unspecified
-                            )
-                        }
-                    }else{
-                        Icon(painter = painterResource(id = R.drawable.bookmark1),
-                            contentDescription = null, modifier = Modifier
-                                .size(30.dp)
-                                .padding(4.dp)
-                                .clickable { mainViewModel.pushListOfArticle(user = currentUser,art = mainViewModel.clickedNews.value!!) },
-                            tint = Color.Unspecified
-                        )
-                    }
+                added.value = mainViewModel.clickedNews?.value in mainViewModel.articleFire
+
+                if (added.value == false){
+                    Image(painter = painterResource(id = R.drawable.bookmark1), contentDescription = null,modifier = Modifier.size(34.dp).clickable {
+                        mainViewModel.pushListOfArticle(user = currentUser,art = mainViewModel.clickedNews.value!!)
+                    })
+                }else{
+                    Image(painter = painterResource(id = R.drawable.bookmark_added), contentDescription = null,modifier = Modifier.size(34.dp))
                 }
+
+
             }
         }
 
@@ -343,151 +329,9 @@ fun DetailScreen(
                         }
                     }
                 }
-
-//                if (news.articles.size > 12){
-//                    for (art in news.articles.subList(0,10)){
-//                        if (art?.title != null && art?.description != null && art?.content != null && art?.urlToImage != null){
-//
-//                            NewsBox(imageURL = art.urlToImage,
-//                                title = art.title,
-//                                desc = art.description,
-//                                content = art.content) {
-//
-////                        navigation Call
-////                            navController.navigate(JetScreens.DetailScreen.name + "/${listOf(art?.title.toString())}/${listOf(art?.description.toString())}/${listOf(art?.urlToImage.toString())}/${listOf(art?.content.toString())}")
-//
-//
-//
-//                                mainViewModel.clickedNews.value = art
-//                                mainViewModel.getSearchedNews(language = "en", art.title.slice(0..12))
-////
-////                            navController.navigate(JetScreens.DetailScreen.name + "/${Base64.encodeToString(art?.title.toString().toByteArray(),Base64.DEFAULT)}/${Base64.encodeToString(art?.description.toString().toByteArray(),Base64.DEFAULT)}/${Base64.encodeToString(art?.urlToImage.toString().toByteArray(),Base64.DEFAULT)}/${Base64.encodeToString(art?.content.toString().toByteArray(),Base64.DEFAULT)}")
-//
-//                                navController.navigate(JetScreens.DetailScreen.name)
-//
-//
-////                        navController.navigate(JetScreens.DetailScreen.name + "/title/desc/Imageurl/content")
-//
-//                            }
-//                            Spacer(modifier = Modifier.height(5.dp))
-//                        }
-//                    }
-//                }else{
-//                    if (news.articles.size > 0) {
-//                        for (art in news.articles.subList(0, news.articles.size)) {
-//                            if (art?.title != null && art?.description != null && art?.content != null && art?.urlToImage != null) {
-//
-//                                NewsBox(imageURL = art.urlToImage,
-//                                    title = art.title,
-//                                    desc = art.description,
-//                                    content = art.content) {
-//
-////                        navigation Call
-////                            navController.navigate(JetScreens.DetailScreen.name + "/${listOf(art?.title.toString())}/${listOf(art?.description.toString())}/${listOf(art?.urlToImage.toString())}/${listOf(art?.content.toString())}")
-//
-//
-//                                    mainViewModel.clickedNews.value = art
-//                                    mainViewModel.getSearchedNews(language = "en",
-//                                        art.title.slice(0..12))
-////
-////                            navController.navigate(JetScreens.DetailScreen.name + "/${Base64.encodeToString(art?.title.toString().toByteArray(),Base64.DEFAULT)}/${Base64.encodeToString(art?.description.toString().toByteArray(),Base64.DEFAULT)}/${Base64.encodeToString(art?.urlToImage.toString().toByteArray(),Base64.DEFAULT)}/${Base64.encodeToString(art?.content.toString().toByteArray(),Base64.DEFAULT)}")
-//
-//                                    navController.navigate(JetScreens.DetailScreen.name)
-//
-//
-////                        navController.navigate(JetScreens.DetailScreen.name + "/title/desc/Imageurl/content")
-//
-//                                }
-//                                Spacer(modifier = Modifier.height(5.dp))
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-
-
-//            if (news?.articles != null){
-//
-//                Text(text = "Related", fontSize = 25.sp, color = Color.Black.copy(alpha = 0.8f), fontWeight = FontWeight.Bold, modifier = Modifier.padding(10.dp))
-//
-//                if (news.articles.size < 10) {
-//                    val l = news.articles.size
-//                    for (art in news.articles.subList(0, l)) {
-//                        if (art?.title != null && art?.description != null && art?.content != null && art?.urlToImage != null) {
-//
-//                            NewsBox(
-//                                imageURL = art.urlToImage,
-//                                title = art.title,
-//                                desc = art.description,
-//                                content = art.content,
-//
-//                                ) {
-//
-////                        navigation Call
-////                            navController.navigate(JetScreens.DetailScreen.name + "/${listOf(art?.title.toString())}/${listOf(art?.description.toString())}/${listOf(art?.urlToImage.toString())}/${listOf(art?.content.toString())}")
-//
-//
-//                                mainViewModel.clickedNews.value = art
-//
-//                                navController.navigate(JetScreens.DetailScreen.name)
-//
-//
-////                        navController.navigate(JetScreens.DetailScreen.name + "/title/desc/Imageurl/content")
-//
-//                            }
-//                            Spacer(modifier = Modifier.height(5.dp))
-//
-//                        }
-//                    }
-//                }else{
-//
-//                    if (news.articles.size > 10) {
-//                        val l = news.articles.size
-//                        for (art in news.articles.subList(0, 10)) {
-//                            if (art?.title != null && art?.description != null && art?.content != null && art?.urlToImage != null) {
-//
-//                                NewsBox(
-//                                    imageURL = art.urlToImage,
-//                                    title = art.title,
-//                                    desc = art.description,
-//                                    content = art.content,
-//
-//                                    ) {
-//
-////                        navigation Call
-////                            navController.navigate(JetScreens.DetailScreen.name + "/${listOf(art?.title.toString())}/${listOf(art?.description.toString())}/${listOf(art?.urlToImage.toString())}/${listOf(art?.content.toString())}")
-//
-//
-//                                    mainViewModel.clickedNews.value = art
-//
-////                                navController.navigate(JetScreens.DetailScreen.name + "/${
-////                                    Base64.encodeToString(art?.title.toString().toByteArray(),
-////                                        Base64.DEFAULT)
-////                                }/${
-////                                    Base64.encodeToString(art?.description.toString().toByteArray(),
-////                                        Base64.DEFAULT)
-////                                }/${
-////                                    Base64.encodeToString(art?.urlToImage.toString().toByteArray(),
-////                                        Base64.DEFAULT)
-////                                }/${
-////                                    Base64.encodeToString(art?.content.toString().toByteArray(),
-////                                        Base64.DEFAULT)
-////                                }")
-//
-//                                    navController.navigate(JetScreens.DetailScreen.name)
-//
-//
-////                        navController.navigate(JetScreens.DetailScreen.name + "/title/desc/Imageurl/content")
-//
-//                                }
-//                                Spacer(modifier = Modifier.height(5.dp))
-//
-//                            }
-//                        }
-//                    }
-//                }
-//            }
             }
         }
     }
 }
+
+

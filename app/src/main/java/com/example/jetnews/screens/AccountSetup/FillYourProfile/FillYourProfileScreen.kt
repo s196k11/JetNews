@@ -1,10 +1,7 @@
 package com.example.jetnews.screens.AccountSetup.FillYourProfile
 
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
@@ -28,15 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -46,9 +39,7 @@ import com.example.jetnews.Model.Source
 import com.example.jetnews.Model.UserInfoData
 import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.screens.MainViewModel
-import com.example.jetnews.screens.SignUp_SingIn.SignIn.TextRow
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 //@Preview(showSystemUi = true)
 @Composable
@@ -141,8 +132,9 @@ fun FillYourProfileScreen(navController: NavHostController = rememberNavControll
 
             OutlinedButton(onClick = {
                                      if (userName.value.trim().isNotEmpty() && aboutMe.value.trim().isNotEmpty()){
-                                         mainViewModel.sendNewsFireB(user = currentUser,data = UserInfoData(userName = userName.value.trim(), email = auth.currentUser?.email, country = mainViewModel.country.value.trim() ,aboutMe = aboutMe.value.toString(), language = "en", article = listOf(
-                                             Article(author = "null", content = "null", description = "null", publishedAt = "null", source = Source(id = "null", name = "null"), title = "null", url = "null", urlToImage = "null"))))
+                                         mainViewModel.sendNewsFireB(user = currentUser,data = UserInfoData(
+                                             userName = userName.value.trim(), email = auth.currentUser?.email, country = mainViewModel.country.value.trim() ,
+                                             aboutMe = aboutMe.value.toString(), language = "en"))
                                          navController.navigate(JetScreens.MainScreen.name){
                                              popUpTo(JetScreens.MainScreen.name)
                                          }
