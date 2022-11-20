@@ -44,6 +44,9 @@ import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.R
 import com.example.jetnews.screens.MainViewModel
 import android.util.Base64
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import com.example.jetnews.Model.Article
 import com.example.jetnews.Model.News
 import com.example.jetnews.Model.UserInfoData
@@ -68,6 +71,8 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
     val context = LocalContext.current
 
     val currentUser = auth.currentUser?.email.toString().split("@")[0]
+    val focusRequest = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
 
     if (searchedClicked.value) {
@@ -98,10 +103,10 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(value = text.value,
                 onValueChange = { text.value = it },
-                modifier = Modifier.fillMaxWidth(0.87f),
+                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester = focusRequest),
                 colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = Color.LightGray.copy(
                     alpha = 0.5f),
-                    unfocusedBorderColor = Color.LightGray.copy(alpha = 0.5f),
+                    unfocusedBorderColor = Color.DarkGray,
                     backgroundColor = Color.White.copy(alpha = 0.5f)),
                 shape = CircleShape,
                 textStyle = TextStyle(fontSize = 20.sp),
@@ -112,23 +117,27 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
                     Icon(imageVector = Icons.Default.Search,
                         contentDescription = "Search Icon",
                         modifier = Modifier.clickable {
+                            focusManager.clearFocus(force = true)
                             mainViewModel.getSearchedNews(language = "en", text.value)
                             searchedClicked.value = true
+                            text.value = ""
                         })
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search,
                     keyboardType = KeyboardType.Text),
                 keyboardActions = KeyboardActions(onSearch = {
+                    focusManager.clearFocus(force = true)
                     mainViewModel.getSearchedNews(language = "en", text.value)
                     searchedClicked.value = true
+                    text.value = ""
                 })
             )
 
-            Icon(imageVector = Icons.Default.Notifications,
-                contentDescription = "filter",
-                modifier = Modifier
-                    .size(45.dp)
-                    .padding(start = 2.dp))
+//            Icon(imageVector = Icons.Default.Notifications,
+//                contentDescription = "filter",
+//                modifier = Modifier
+//                    .size(45.dp)
+//                    .padding(start = 2.dp))
         }
 
         Spacer(modifier = Modifier.height(10.dp))

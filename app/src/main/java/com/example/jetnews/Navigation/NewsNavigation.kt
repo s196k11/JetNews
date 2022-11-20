@@ -107,6 +107,8 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
             AccountScreen(navController = navController,mainViewModel = mainViewModel)
         }
 
+
+
 //        composable(JetScreens.DetailScreen.name + "/{title}/{desc}/{imageURL}/{content}",
 //            arguments = listOf(navArgument("title"){type = NavType.StringType},
 //                navArgument("desc"){type = NavType.StringType},
@@ -130,7 +132,15 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
         }
 
         composable(JetScreens.EditProfileScreen.name){
-            EditProfile(navController = navController, mainViewModel = mainViewModel)
+            EditProfile(navController = navController, mainViewModel = mainViewModel, auth = auth)
+        }
+
+        composable(JetScreens.ForgotPasswordScreen.name){
+            ForgetPasswordScreen(navController = navController, auth = auth)
+        }
+
+        composable(JetScreens.SelectCountyScreen.name){
+            SelectYourCountry(navController = navController, mainViewModel = mainViewModel, auth = auth)
         }
 
 

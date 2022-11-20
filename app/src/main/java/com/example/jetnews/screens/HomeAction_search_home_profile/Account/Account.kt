@@ -124,7 +124,7 @@ fun AccountScreen(navController:NavHostController = rememberNavController(),main
 
         Log.d("image Uri", imageUri.toString())
 
-        Text(text = mainViewModel.userData.value?.userName.toString(), fontWeight = FontWeight.SemiBold, fontSize = 25.sp)
+        Text(text = mainViewModel.userData.value?.userName.toString(), fontWeight = FontWeight.SemiBold, fontSize = 25.sp,modifier = Modifier.padding(start = 8.dp))
 
         TextBox(title = "About Me",text = mainViewModel.userData.value?.aboutMe.toString())
 
@@ -134,7 +134,7 @@ fun AccountScreen(navController:NavHostController = rememberNavController(),main
 
 @Composable
 fun TextBox(title:String,text:String){
-    Row(modifier = Modifier.fillMaxWidth().height(intrinsicSize = IntrinsicSize.Max)) {
+    Row(modifier = Modifier.fillMaxWidth().height(intrinsicSize = IntrinsicSize.Max).padding(10.dp)) {
         Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.Start) {
             Text(text = title, fontWeight = FontWeight.Bold)
             Surface(modifier = Modifier

@@ -206,7 +206,7 @@ fun DetailScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .size(30.dp)
-                        .clickable { navController.navigate(JetScreens.HomeScreen.name) { navController.popBackStack() } }
+                        .clickable { navController.popBackStack() }
                 )
 
                 Log.d("Articles ","  ${mainViewModel.userData.value.toString()}")

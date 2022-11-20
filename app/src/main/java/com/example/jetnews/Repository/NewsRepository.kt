@@ -113,5 +113,10 @@ class NewsRepository @Inject constructor(private val newsAPI: NewsAPI) {
         database.reference.child(user).child("UserData").child("article").push().setValue(art)
     }
 
+    fun editProfile(user: String,userName:String,aboutMe:String){
+        database.reference.child(user).child("UserData").child("userName").setValue(userName)
+        database.reference.child(user).child("UserData").child("aboutMe").setValue(aboutMe)
+    }
+
 
 }

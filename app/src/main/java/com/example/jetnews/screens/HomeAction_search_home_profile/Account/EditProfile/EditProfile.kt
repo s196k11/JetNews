@@ -2,8 +2,13 @@ package com.example.jetnews.screens.HomeAction_search_home_profile.Account.EditP
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -11,12 +16,20 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,20 +41,35 @@ import androidx.navigation.compose.rememberNavController
 import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.screens.MainViewModel
 import com.example.jetnews.screens.SignUp_SingIn.SignIn.TextRow
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 //Apearence
 //logout
 
-@Preview(showSystemUi = true)
+
 @Composable
 fun EditProfile(
     navController: NavHostController = rememberNavController(),
     mainViewModel: MainViewModel = hiltViewModel(),
+    auth: FirebaseAuth
 ) {
     val conf = LocalConfiguration.current
     val screenH = conf.screenHeightDp.dp
+    val userName = remember { mutableStateOf(mainViewModel.userData.value?.userName.toString()) }
+    val aboutMe = remember { mutableStateOf(mainViewModel.userData.value?.aboutMe.toString()) }
+    val email = remember { mutableStateOf(mainViewModel.userData.value?.email.toString()) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    val focusRequest = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    val currentUser = auth.currentUser?.email.toString().split("@")[0]
+
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally) {
         TopAppBar(backgroundColor = Color.White.copy(alpha = 0.7f)) {
 
             Icon(imageVector = Icons.Default.ArrowBack,
@@ -67,7 +95,6 @@ fun EditProfile(
         ) {
             Box(modifier = Modifier
                 .size(screenH / 3 - 20.dp)
-                .shadow(elevation = 1.dp, shape = CircleShape)
             ) {
                 Icon(imageVector = Icons.Default.Person,
                     contentDescription = null,
@@ -90,40 +117,56 @@ fun EditProfile(
             text2 = "*",
             t1c = Color.Gray,
             t2c = Color.Red,
-            modifier = Modifier.align(Alignment.Start))
-        OutlinedTextField(value = "", onValueChange = {}, modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp), shape = CircleShape,
-            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(0xFFFF683A), focusedBorderColor = Color(0xFFFF683A))
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(start = 9.dp))
+        OutlinedTextField(value = userName.value,
+            onValueChange = {userName.value = it},
+            placeholder = { Text(text = "UserName") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 9.dp, end = 12.dp)
+                .focusRequester(focusRequester = focusRequest),
+            shape = CircleShape,
+            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(
+                0xFFFF683A), focusedBorderColor = Color(0xFFFF683A)),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Text),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(focusDirection = FocusDirection.Down)
+            })
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TextRow(text1 = "Email",
-            text2 = "*",
-            t1c = Color.Gray,
-            t2c = Color.Red,
-            modifier = Modifier.align(Alignment.Start))
-        OutlinedTextField(value = "", onValueChange = {}, modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp), shape = CircleShape,
-            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(0xFFFF683A), focusedBorderColor = Color(0xFFFF683A))
-        )
         Spacer(modifier = Modifier.height(10.dp))
 
         TextRow(text1 = "About Me",
             text2 = "*",
             t1c = Color.Gray,
             t2c = Color.Red,
-            modifier = Modifier.align(Alignment.Start))
-        OutlinedTextField(value = "", onValueChange = {}, modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp), shape = CircleShape,
-            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(0xFFFF683A), focusedBorderColor = Color(0xFFFF683A))
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(start = 9.dp))
+        OutlinedTextField(value = aboutMe.value,
+            onValueChange = {aboutMe.value = it},
+            placeholder = { Text(text = "About Me") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 9.dp, end = 12.dp).focusRequester(focusRequester = focusRequest),
+            shape = CircleShape,
+            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(
+                0xFFFF683A), focusedBorderColor = Color(0xFFFF683A)),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Text),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus(force = true)
+                mainViewModel.editProfile(user = currentUser,userName.value,aboutMe.value)
+                navController.navigate(JetScreens.AccountScreen.name)
+            })
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedButton(onClick = { /*TODO*/ },
+        OutlinedButton(onClick = {
+                                 mainViewModel.editProfile(user = currentUser,userName.value,aboutMe.value)
+            navController.navigate(JetScreens.AccountScreen.name)
+        },
             shape = CircleShape,
             colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(
                 0xFFFF683A))) {

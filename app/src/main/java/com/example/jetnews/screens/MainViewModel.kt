@@ -132,4 +132,8 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
         newsRepository.pushListOfArticle(user, art)
     }
 
+    fun editProfile(user:String,userName:String,aboutMe:String){
+        newsRepository.editProfile(user, userName, aboutMe)
+    }
+
 }

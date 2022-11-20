@@ -62,7 +62,9 @@ fun SettingScreen(navController: NavHostController,mainViewModel: MainViewModel)
             items(l){item ->
                 Divider(modifier = Modifier.width(screenW - 20.dp),color = Color.LightGray)
                 Spacer(modifier = Modifier.height(5.dp))
-                SettingBox(name = item)
+                SettingBox(name = item){
+
+                }
                 Spacer(modifier = Modifier.height(5.dp))
 
 
@@ -78,10 +80,10 @@ fun SettingScreen(navController: NavHostController,mainViewModel: MainViewModel)
 
 
 @Composable
-fun SettingBox(name:String){
+fun SettingBox(name:String,onClick:() -> Unit){
     Surface(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp),
+        .height(50.dp).clickable { onClick() },
         color = Color.Transparent
     ) {
         Row(modifier = Modifier.fillMaxSize().background(color = Color.Transparent), verticalAlignment = Alignment.CenterVertically) {
