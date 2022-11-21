@@ -128,6 +128,8 @@ fun AccountScreen(navController:NavHostController = rememberNavController(),main
 
         TextBox(title = "About Me",text = mainViewModel.userData.value?.aboutMe.toString())
 
+        Log.d("dataaaaaaaa",mainViewModel.userData.value.toString())
+
     }
 }
 

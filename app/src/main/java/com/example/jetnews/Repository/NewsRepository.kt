@@ -118,5 +118,9 @@ class NewsRepository @Inject constructor(private val newsAPI: NewsAPI) {
         database.reference.child(user).child("UserData").child("aboutMe").setValue(aboutMe)
     }
 
+    fun selectCountry(user:String,country: String){
+        database.reference.child(user).child("UserData").child("country").setValue(country)
+    }
+
 
 }

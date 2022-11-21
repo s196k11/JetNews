@@ -57,8 +57,14 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
                 val data = snapshot.getValue<UserInfoData>()
                 Log.d("dataFire",data!!.toString())
                 userData.value = data
-                for (i in userData.value!!.article!!.values){
-                    articleFire.add(i)
+                if (userData.value?.article?.values != null) {
+                    for (i in userData.value!!.article!!.values) {
+                        if (i in articleFire){
+
+                        }else {
+                            articleFire.add(i)
+                        }
+                    }
                 }
             }
 
@@ -134,6 +140,10 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
 
     fun editProfile(user:String,userName:String,aboutMe:String){
         newsRepository.editProfile(user, userName, aboutMe)
+    }
+
+    fun selectCountry(user:String,country: String){
+        newsRepository.selectCountry(user, country)
     }
 
 }

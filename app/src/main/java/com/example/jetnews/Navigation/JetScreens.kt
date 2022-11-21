@@ -12,6 +12,8 @@ enum class JetScreens {
     FillProfileScreen,
     HomeScreen,
     MainScreen,
+    HelpScreen,
+    ChangeCountryScreen,
     SearchScreen,
     BookMarkScreen,
     AccountScreen,

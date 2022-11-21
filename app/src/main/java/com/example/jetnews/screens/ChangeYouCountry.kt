@@ -1,4 +1,4 @@
-package com.example.jetnews.screens.AccountSetup.SelectYourCountry
+package com.example.jetnews.screens
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.jetnews.Model.UserInfoData
 import com.example.jetnews.Navigation.JetScreens
-import com.example.jetnews.screens.MainViewModel
+import com.example.jetnews.screens.AccountSetup.SelectYourCountry.Country
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SelectYourCountry(navController:NavHostController,mainViewModel: MainViewModel,auth: FirebaseAuth){
+fun ChangeYourCountry(navController: NavHostController, mainViewModel: MainViewModel, auth: FirebaseAuth){
     val text = rememberSaveable {
         mutableStateOf("")
     }
@@ -55,7 +55,7 @@ fun SelectYourCountry(navController:NavHostController,mainViewModel: MainViewMod
     }
 
     //selected country code
-    val s = mapOfCountries[selectedCountry.value]
+    val s = mapOfCountries.get(selectedCountry.value)
 
     mainViewModel.selectedCountry(countryCode = s.toString())
     Log.d("selectedC", "     ${s.toString()}")
@@ -70,7 +70,7 @@ fun SelectYourCountry(navController:NavHostController,mainViewModel: MainViewMod
         ) {
             Row(verticalAlignment = Alignment.CenterVertically,modifier = Modifier.fillMaxWidth()) {
 
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null,modifier =Modifier.clickable { navController.popBackStack() })
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null,modifier = Modifier.clickable { navController.popBackStack() })
 
                 OutlinedTextField(value = text.value,
                     onValueChange = { text.value = it },
@@ -118,7 +118,7 @@ fun SelectYourCountry(navController:NavHostController,mainViewModel: MainViewMod
 
         }
         OutlinedButton(onClick = {
-            mainViewModel.sendNewsFireB(user = currentUser, data = UserInfoData(country = s))
+            mainViewModel.selectCountry(user = currentUser, country = s!!)
             navController.navigate(JetScreens.FillProfileScreen.name){navController.popBackStack()}
         },
             modifier = Modifier
@@ -137,16 +137,4 @@ fun SelectYourCountry(navController:NavHostController,mainViewModel: MainViewMod
 
 
 
-@Composable
-fun Country(name:String,borderWidth:Int = 2,color: Color = Color(0xEEFF6876),onClick:() -> Unit){
-    Surface(modifier = Modifier
-        .fillMaxWidth()
-        .height(50.dp)
-        .clickable { onClick() }
-        ,
-        shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(width = borderWidth.dp,color = color)
-    ) {
-        Text(text = name, textAlign = TextAlign.Start,modifier = Modifier.padding(10.dp, top = 10.dp))
-    }
-}
+

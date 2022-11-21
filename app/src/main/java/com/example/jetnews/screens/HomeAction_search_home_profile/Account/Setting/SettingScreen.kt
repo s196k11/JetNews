@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import com.example.jetnews.Model.UserInfoData
 import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.screens.MainViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -39,57 +40,100 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun SettingScreen(navController: NavHostController,mainViewModel: MainViewModel){
+fun SettingScreen(
+    navController: NavHostController,
+    mainViewModel: MainViewModel,
+    auth: FirebaseAuth,
+) {
     val localConf = LocalConfiguration.current
     val screenW = localConf.screenWidthDp.dp
 
-    val l = listOf("Edit Profile","Change Country","Change Password","Help")
+    val l = listOf("Edit Profile", "Select Country","Change Password", "Help")
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopAppBar(backgroundColor = Color.White.copy(alpha = 0.7f)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(color = Color.Transparent)) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            TopAppBar(backgroundColor = Color.White.copy(alpha = 0.7f)) {
 
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null, tint = Color.Black,modifier = Modifier
-                .padding(2.dp)
-                .clickable { navController.navigate(JetScreens.AccountScreen.name) })
+                Icon(imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clickable { navController.navigate(JetScreens.AccountScreen.name) })
 
 
-            Text(text = "Settings", color = Color.Black,textAlign = TextAlign.Start,modifier = Modifier.padding(5.dp))
-        }
-        
+                Text(text = "Settings",
+                    color = Color.Black,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.padding(5.dp))
+            }
 
 
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally){
-            items(l){item ->
-                Divider(modifier = Modifier.width(screenW - 20.dp),color = Color.LightGray)
-                Spacer(modifier = Modifier.height(5.dp))
-                SettingBox(name = item){
+
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+                items(l) { item ->
+                    Divider(modifier = Modifier.width(screenW - 20.dp), color = Color.LightGray)
+                    Spacer(modifier = Modifier.height(5.dp))
+                    SettingBox(name = item) {
+                        if (item == "Edit Profile") {
+                            navController.navigate(JetScreens.EditProfileScreen.name)
+                        }
+                        if (item == "Change Password"){
+                            navController.navigate(JetScreens.ForgotPasswordScreen.name)
+                        }
+                        if (item == "Help"){
+                            navController.navigate(JetScreens.HelpScreen.name)
+                        }
+
+
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+
 
                 }
-                Spacer(modifier = Modifier.height(5.dp))
-
-
             }
+
+
         }
-
-
-
+        Text(text = "Log Out",
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            modifier = Modifier.align(Alignment.BottomCenter).clickable {
+                auth.signOut()
+                navController.navigate(JetScreens.SingInScreen.name){
+                    popUpTo(JetScreens.SettingScreen.name){
+                        inclusive = true
+                    }
+                }
+            })
 
     }
+
 }
 
 
-
 @Composable
-fun SettingBox(name:String,onClick:() -> Unit){
+fun SettingBox(name: String, onClick: () -> Unit) {
     Surface(modifier = Modifier
         .fillMaxWidth()
-        .height(50.dp).clickable { onClick() },
+        .height(50.dp)
+        .clickable { onClick() },
         color = Color.Transparent
     ) {
-        Row(modifier = Modifier.fillMaxSize().background(color = Color.Transparent), verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = Icons.Default.Person, contentDescription = null,modifier = Modifier.padding(start = 10.dp))
-            
-            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(start = 15.dp))
+        Row(modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Transparent),
+            verticalAlignment = Alignment.CenterVertically) {
+            Icon(imageVector = Icons.Default.Person,
+                contentDescription = null,
+                modifier = Modifier.padding(start = 10.dp))
+
+            Text(text = name,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.padding(start = 15.dp))
         }
     }
 }

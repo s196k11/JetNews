@@ -11,6 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.jetnews.screens.AccountSetup.FillYourProfile.FillYourProfileScreen
 import com.example.jetnews.screens.AccountSetup.SelectYourCountry.SelectYourCountry
+import com.example.jetnews.screens.ChangeYourCountry
+import com.example.jetnews.screens.Help
 import com.example.jetnews.screens.HomeAction_search_home_profile.Account.AccountScreen
 import com.example.jetnews.screens.HomeAction_search_home_profile.Account.EditProfile.EditProfile
 import com.example.jetnews.screens.HomeAction_search_home_profile.Account.Setting.SettingScreen
@@ -72,6 +74,8 @@ fun NavGraphBuilder.authenticationGraph(navController: NavHostController,mainVie
         composable(JetScreens.ForgotPasswordScreen.name){
             ForgetPasswordScreen(navController = navController,auth = auth)
         }
+
+        accountSetupGraph(navController, mainViewModel, auth)
     }
 
 }
@@ -128,20 +132,27 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
         }
 
         composable(JetScreens.SettingScreen.name){
-            SettingScreen(navController = navController, mainViewModel = mainViewModel)
+            SettingScreen(navController = navController, mainViewModel = mainViewModel,auth)
         }
 
         composable(JetScreens.EditProfileScreen.name){
             EditProfile(navController = navController, mainViewModel = mainViewModel, auth = auth)
         }
 
-        composable(JetScreens.ForgotPasswordScreen.name){
-            ForgetPasswordScreen(navController = navController, auth = auth)
-        }
 
         composable(JetScreens.SelectCountyScreen.name){
             SelectYourCountry(navController = navController, mainViewModel = mainViewModel, auth = auth)
         }
+
+        composable(JetScreens.ChangeCountryScreen.name){
+            ChangeYourCountry(navController = navController, mainViewModel = mainViewModel, auth = auth)
+        }
+
+        composable(JetScreens.HelpScreen.name){
+            Help()
+        }
+
+        authenticationGraph(navController, mainViewModel, auth)
 
 
 
