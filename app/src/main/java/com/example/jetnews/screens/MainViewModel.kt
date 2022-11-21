@@ -55,7 +55,7 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
         val dataListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val data = snapshot.getValue<UserInfoData>()
-                Log.d("dataFire",data!!.toString())
+//                Log.d("dataFire",data!!.toString())
                 userData.value = data
                 if (userData.value?.article?.values != null) {
                     for (i in userData.value!!.article!!.values) {
