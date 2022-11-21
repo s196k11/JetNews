@@ -16,12 +16,16 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -47,159 +51,174 @@ import com.google.firebase.auth.FirebaseAuth
 fun SignInScreen(navController: NavController,mainViewModel: MainViewModel,auth: FirebaseAuth) {
 
 
-    val passwordVisible = rememberSaveable { mutableStateOf(false) }
+    val passwordVisible = rememberSaveable { mutableStateOf(true) }
 
     val email = rememberSaveable {mutableStateOf("")}
     val password = rememberSaveable {mutableStateOf("")}
-    val focuseManager = LocalFocusManager.current
     val context = LocalContext.current
     val message = rememberSaveable {
         mutableStateOf("")
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 5.dp, end = 5.dp, top = 10.dp)
-            .verticalScroll(rememberScrollState())
-            .background(color = Color(0xffEFF7F6))
-    ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)) {
+    val focusRequest = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
-        }
-
-        Text(
-            text = "Lets Sign In", fontWeight = FontWeight.Bold, fontSize = 35.sp,
-        )
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Text(text = message.value, color = Color.Red, fontWeight = FontWeight.SemiBold, fontSize = 19.sp)
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TextRow(text1 = "Email",
-            text2 = "*",
-            t1c = Color.Black,
-            t2c = Color.Red,
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(color = Color.Transparent)) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 4.dp, start = 18.dp))
-        OutlinedTextField(value = email.value, onValueChange = {email.value = it},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp)
-            ,
-            shape = CircleShape,
-            placeholder = { Text(text = "Email") },
-            singleLine = true,
-            maxLines = 1,
-            leadingIcon = {
-                Icon(imageVector = Icons.Default.Email,
-                    contentDescription = "Email Icons")
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Email),
-            keyboardActions = KeyboardActions(onSearch = {focuseManager.moveFocus(focusDirection = FocusDirection.Down)})
-
-        )
-
-        TextRow(text1 = "Password",
-            text2 = "*",
-            t1c = Color.Black,
-            t2c = Color.Red,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 4.dp, start = 18.dp))
-        OutlinedTextField(value = password.value, onValueChange = {password.value =  it},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 15.dp),
-            shape = CircleShape,
-            placeholder = { Text(text = "Password") },
-            singleLine = true,
-            maxLines = 1,
-            trailingIcon = {
-                if (passwordVisible.value) {
-                    Icon(painter = painterResource(id = R.drawable.eye),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable { passwordVisible.value = false })
-                } else {
-                    Icon(painter = painterResource(id = R.drawable.close_eye),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable { passwordVisible.value = true })
-                }
-            },
-            leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = null) },
-            visualTransformation = if (passwordVisible.value) {
-                PasswordVisualTransformation()
-            } else {
-                VisualTransformation.None
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Password),
-            keyboardActions = KeyboardActions(onDone = {
-                auth.signInWithEmailAndPassword(email.value,password.value)
-                    .addOnCompleteListener(){task ->
-                        if(task.isSuccessful){
-                            Log.d("FireBase",task.result.toString())
-                            message.value = ""
-                            navController.navigate(JetScreens.MainScreen.name){
-                                popUpTo(JetScreens.MainScreen.name)
-                            }
-                        }else{
-                            Log.d("FireBaseElse",task.exception?.message.toString())
-                            message.value = "Invalid UserId and Password"
-                        }
-                    }
-            })
-
-        )
-
-        OutlinedButton(onClick = {
-            auth.signInWithEmailAndPassword(email.value,password.value)
-                .addOnCompleteListener(){task ->
-                    if(task.isSuccessful){
-                        Log.d("FireBase",task.result.toString())
-                        message.value = ""
-                        navController.navigate(JetScreens.MainScreen.name){
-                            popUpTo(JetScreens.MainScreen.name)
-                        }
-                    }else{
-                        Log.d("FireBaseElse",task.exception?.message.toString())
-                        message.value = "Invalid UserId and Password"
-                    }
-                }
-        },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(59.dp),
-            shape = CircleShape,
-            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(0xFFFF9A3A)),
-            elevation = ButtonDefaults.elevation(4.dp),
+                .fillMaxSize()
+                .padding(start = 5.dp, end = 5.dp, top = 10.dp)
+                .verticalScroll(rememberScrollState())
+                .background(color = Color(0xffEFF7F6))
         ) {
-            Text(text = "Sign In",fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-        }
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(230.dp)) {
 
-        Spacer(modifier = Modifier.height(15.dp))
+                Image(painter = painterResource(id = R.drawable.login), contentDescription = null, contentScale = ContentScale.Crop)
+                Text(
+                    text = "Lets Sign In",fontWeight = FontWeight.Bold, fontSize = 35.sp,modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
 
-        Text(text = "Forget Password?",
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .clickable {
-                           navController.navigate(JetScreens.ForgotPasswordScreen.name)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(text = message.value,
+                color = Color.Red,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TextRow(text1 = "Email",
+                text2 = "*",
+                t1c = Color.Black,
+                t2c = Color.Red,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(bottom = 4.dp, start = 18.dp))
+            OutlinedTextField(value = email.value, onValueChange = { email.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                shape = CircleShape,
+                placeholder = { Text(text = "Email") },
+                singleLine = true,
+                maxLines = 1,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Email,
+                        contentDescription = "Email Icons")
                 },
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            color = Color.Red.copy(alpha = 0.5f))
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Email),
+                keyboardActions = KeyboardActions(onSearch = {
+                    focusManager.moveFocus(focusDirection = FocusDirection.Down)
+                })
+
+            )
+
+            TextRow(text1 = "Password",
+                text2 = "*",
+                t1c = Color.Black,
+                t2c = Color.Red,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(bottom = 4.dp, start = 18.dp))
+            OutlinedTextField(value = password.value, onValueChange = { password.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 15.dp).focusRequester(focusRequester = focusRequest),
+                shape = CircleShape,
+                placeholder = { Text(text = "Password") },
+                singleLine = true,
+                maxLines = 1,
+                trailingIcon = {
+                    if (passwordVisible.value) {
+                        Icon(painter = painterResource(id = R.drawable.eye),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable { passwordVisible.value = false })
+                    } else {
+                        Icon(painter = painterResource(id = R.drawable.close_eye),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable { passwordVisible.value = true })
+                    }
+                },
+                leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = null) },
+                visualTransformation = if (passwordVisible.value) {
+                    PasswordVisualTransformation()
+                } else {
+                    VisualTransformation.None
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(onDone = {
+//                    auth.signInWithEmailAndPassword(email.value, password.value)
+//                        .addOnCompleteListener() { task ->
+//                            if (task.isSuccessful) {
+//                                Log.d("FireBase", task.result.toString())
+//                                message.value = ""
+//                                navController.navigate(JetScreens.MainScreen.name) {
+//                                    popUpTo(JetScreens.MainScreen.name)
+//                                }
+//                            } else {
+//                                Log.d("FireBaseElse", task.exception?.message.toString())
+//                                message.value = "Invalid UserId and Password"
+//
+//                            }
+//                        }
+                    focusManager.clearFocus(force = true)
+                })
+
+            )
+
+            OutlinedButton(
+                onClick = {
+                    auth.signInWithEmailAndPassword(email.value, password.value)
+                        .addOnCompleteListener() { task ->
+                            if (task.isSuccessful) {
+                                Log.d("FireBase", task.result.toString())
+                                message.value = ""
+                                navController.navigate(JetScreens.MainScreen.name) {
+                                    popUpTo(JetScreens.MainScreen.name)
+                                }
+                            } else {
+                                Log.d("FireBaseElse", task.exception?.message.toString())
+                                message.value = "Invalid UserId and Password"
+
+                            }
+                        }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(59.dp),
+                shape = CircleShape,
+                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(0xFFFF9A3A)),
+                elevation = ButtonDefaults.elevation(4.dp),
+            ) {
+                Text(text = "Sign In", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            }
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Text(text = "Forget Password?",
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .clickable {
+                        navController.navigate(JetScreens.ForgotPasswordScreen.name)
+                    },
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = Color.Red.copy(alpha = 0.5f))
 
 
-        //********Implement later
+            //********Implement later
 //        Text(text = "or Continue with", modifier = Modifier.padding(bottom = 45.dp))
 //
 //        Row() {
@@ -223,21 +242,26 @@ fun SignInScreen(navController: NavController,mainViewModel: MainViewModel,auth:
 //            )
 //        }
 
-        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
-            .align(Alignment.End)
-            .padding(15.dp)
-            .fillMaxWidth()
-        ) {
-            Text(text = "Don't Have an Account? ",
-                color = Color.Gray.copy(alpha = 0.8f),
-                fontWeight = FontWeight.Bold)
-            Text(text = "Sign up",
-                color = Color.Red.copy(alpha = 0.5f),
-                modifier = Modifier.clickable {
-                                              navController.navigate(JetScreens.SingUpScreen.name)
-                },
-                fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(25.dp))
+
+
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
+                .align(Alignment.End)
+                .padding(15.dp)
+                .fillMaxWidth()
+            ) {
+                Text(text = "Don't Have an Account? ",
+                    color = Color.Gray.copy(alpha = 0.8f),
+                    fontWeight = FontWeight.Bold)
+                Text(text = "Sign up",
+                    color = Color.Red.copy(alpha = 0.5f),
+                    modifier = Modifier.clickable {
+                        navController.navigate(JetScreens.SingUpScreen.name)
+                    },
+                    fontWeight = FontWeight.Bold)
+            }
         }
+
     }
 }
 

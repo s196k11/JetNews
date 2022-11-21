@@ -84,26 +84,7 @@ class NewsRepository @Inject constructor(private val newsAPI: NewsAPI) {
         }
     }
 
-    fun getRealtimeData(user: String,auth: FirebaseAuth):kotlinx.coroutines.flow.Flow<DataOrException<List<News>>> = callbackFlow{
 
-        val database = Firebase.database.reference
-        database.child("User").child(user)
-
-
-        val newsListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val data = snapshot.getValue<UserInfoData>()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("getRealtime data",error.toException().toString())
-            }
-        }
-
-        database.addValueEventListener(newsListener)
-
-
-    }
 
     fun sendNewsFireB(user:String,data:UserInfoData){
         database.reference.child(user).child("UserData").setValue(data)

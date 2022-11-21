@@ -47,9 +47,9 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
     val articleFire:MutableList<Article> = mutableListOf()
 
 
-    init {
-        getRealtimeData(database = database)
-    }
+//    init {
+//        getRealtimeData(database = database)
+//    }
 
     fun getRealtimeData(database:DatabaseReference){
         val dataListener = object : ValueEventListener {
@@ -72,6 +72,7 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
                 Log.d("onCancelled",error.toException().toString())
             }
         }
+
         database.addValueEventListener(dataListener)
 
     }
@@ -144,6 +145,10 @@ class MainViewModel @Inject constructor(private val newsRepository: NewsReposito
 
     fun selectCountry(user:String,country: String){
         newsRepository.selectCountry(user, country)
+    }
+
+    fun removeArticle(art: Article){
+
     }
 
 }

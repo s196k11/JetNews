@@ -18,11 +18,7 @@ import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.screens.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
@@ -35,6 +31,9 @@ fun SplashScreen(navController: NavController,mainViewModel: MainViewModel,auth:
 
 
     val currentUser = auth.currentUser
+    val user = auth.currentUser?.email.toString().split("@")[0]
+    val database = FirebaseDatabase.getInstance().getReference(user).child("UserData")
+
 
 //    auth.signOut()
 
@@ -50,6 +49,7 @@ fun SplashScreen(navController: NavController,mainViewModel: MainViewModel,auth:
                 }
             }
         }else{
+            mainViewModel.getRealtimeData(database)
             navController.navigate(JetScreens.MainScreen.name) {
                 popUpTo(JetScreens.SplashScreen.name) {
                     inclusive = true

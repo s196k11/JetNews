@@ -44,6 +44,7 @@ import com.example.jetnews.Navigation.JetScreens
 import com.example.jetnews.R
 import com.example.jetnews.screens.MainViewModel
 import android.util.Base64
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -51,6 +52,7 @@ import com.example.jetnews.Model.Article
 import com.example.jetnews.Model.News
 import com.example.jetnews.Model.UserInfoData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -74,6 +76,11 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
     val focusRequest = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
+//    val auth = Firebase.auth
+//    private val currentUser = auth.currentUser?.email.toString().split("@")[0]
+    val database = FirebaseDatabase.getInstance().getReference(currentUser).child("UserData")
+
+
 
     if (searchedClicked.value) {
         if (text.value.isNotEmpty()) {
@@ -82,8 +89,10 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
             Toast.makeText(context, "fill search box", Toast.LENGTH_LONG).show()
         }
     } else {
-        mainViewModel.getTopHeadlines(country = "in", category = clicked.value)
+        mainViewModel.getTopHeadlines(country = mainViewModel.userData.value?.country.toString(), category = clicked.value)
     }
+
+    mainViewModel.getRealtimeData(database)
 
 
 
@@ -113,15 +122,24 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
                 singleLine = true,
                 maxLines = 1,
                 placeholder = { Text(text = "Search") },
-                trailingIcon = {
+                leadingIcon = {
                     Icon(imageVector = Icons.Default.Search,
                         contentDescription = "Search Icon",
                         modifier = Modifier.clickable {
                             focusManager.clearFocus(force = true)
                             mainViewModel.getSearchedNews(language = "en", text.value)
                             searchedClicked.value = true
-                            text.value = ""
+
                         })
+                },
+                trailingIcon = {
+                    if (text.value.isNotEmpty()) {
+                        Icon(imageVector = Icons.Default.Clear,
+                            contentDescription = "Search Icon",
+                            modifier = Modifier.clickable {
+                                text.value = ""
+                            })
+                    }
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search,
                     keyboardType = KeyboardType.Text),
@@ -129,7 +147,6 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel,au
                     focusManager.clearFocus(force = true)
                     mainViewModel.getSearchedNews(language = "en", text.value)
                     searchedClicked.value = true
-                    text.value = ""
                 })
             )
 

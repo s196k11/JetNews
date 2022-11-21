@@ -2,25 +2,26 @@ package com.example.jetnews.screens.SignUp_SingIn.SignUp
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -41,38 +42,49 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,auth: FirebaseAuth){
-    val passwordVisible = rememberSaveable { mutableStateOf(false) }
+    val passwordVisible = rememberSaveable { mutableStateOf(true) }
 
     var email = rememberSaveable {mutableStateOf("")}
     var password = rememberSaveable {mutableStateOf("")}
 
-    val focuseManager = LocalFocusManager.current
+
     val context = LocalContext.current
     val message = rememberSaveable {mutableStateOf("")}
 
+    val focusRequest = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+
+
+    Box(modifier = Modifier.fillMaxSize().background(color = Color.Transparent)){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 5.dp,end = 5.dp,top = 10.dp)
+            .padding(start = 5.dp, end = 5.dp, top = 10.dp)
             .verticalScroll(rememberScrollState())
             .background(color = Color(0xffEFF7F6))
     ) {
         Box(modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)) {
+            .height(200.dp)) {
+
+            Image(painter = painterResource(id = R.drawable.signup), contentDescription = null, contentScale = ContentScale.Crop)
+
+            Text(
+                text = "Create An Account", fontWeight = FontWeight.Bold, fontSize = 35.sp,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
 
         }
 
-        Text(
-            text = "Create An Account", fontWeight = FontWeight.Bold, fontSize = 35.sp,
-        )
 
-        Spacer(modifier = Modifier.height(15.dp))
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(text = message.value, fontSize = 15.sp,color = Color.Red)
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         TextRow(text1 = "Email",
             text2 = "*",
@@ -94,7 +106,7 @@ fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,a
                     contentDescription = "Email Icons")
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Email),
-            keyboardActions = KeyboardActions(onSearch = {focuseManager.moveFocus(focusDirection = FocusDirection.Down)})
+            keyboardActions = KeyboardActions(onSearch = {focusManager.moveFocus(focusDirection = FocusDirection.Down)})
 
         )
 
@@ -108,7 +120,7 @@ fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,a
         OutlinedTextField(value = password.value, onValueChange = {password.value = it},
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 15.dp),
+                .padding(bottom = 15.dp).focusRequester(focusRequester = focusRequest),
             shape = CircleShape,
             placeholder = { Text(text = "Password") },
             singleLine = true,
@@ -136,27 +148,29 @@ fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,a
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Password),
             keyboardActions = KeyboardActions(onDone = {
-                if (password.value.length > 8){
+//                if (password.value.length > 8){
+//
+//                    auth.createUserWithEmailAndPassword(email.value,password.value)
+//                        .addOnCompleteListener() {task->
+//                            if (task.isSuccessful){
+//                                Log.d("FireBase",task.result.toString())
+//                                navController.navigate(JetScreens.SelectCountyScreen.name)
+//                            }else{
+//                                Log.d("FireBase else",task.exception?.message.toString())
+//                                if (task.exception?.message.toString() == "The email address is badly formatted."){
+//                                    message.value = "Invalid Email"
+//                                }else{
+//                                    if (task.exception?.message.toString() == "The email address is already in use by another account."){
+//                                        message.value = "Email is Already Registered"
+//                                    }
+//                                }
+//                            }
+//                        }
+//                }else{
+//                    Toast.makeText(context,"Password Must Contain 8 Characters", Toast.LENGTH_SHORT).show()
+//                }
 
-                    auth.createUserWithEmailAndPassword(email.value,password.value)
-                        .addOnCompleteListener() {task->
-                            if (task.isSuccessful){
-                                Log.d("FireBase",task.result.toString())
-                                navController.navigate(JetScreens.SelectCountyScreen.name)
-                            }else{
-                                Log.d("FireBase else",task.exception?.message.toString())
-                                if (task.exception?.message.toString() == "The email address is badly formatted."){
-                                    message.value = "Invalid Email"
-                                }else{
-                                    if (task.exception?.message.toString() == "The email address is already in use by another account."){
-                                        message.value = "Email is Already Registered"
-                                    }
-                                }
-                            }
-                        }
-                }else{
-                    Toast.makeText(context,"Password Must Contain 8 Characters", Toast.LENGTH_SHORT).show()
-                }
+                focusManager.clearFocus(force = true)
             })
 
         )
@@ -230,6 +244,10 @@ fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,a
 //                    .clickable { }
 //            )
 //        }
+//
+
+        Spacer(modifier = Modifier.height(25.dp))
+
 
         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier
             .align(Alignment.End)
@@ -246,5 +264,6 @@ fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,a
                 },
                 fontWeight = FontWeight.Bold)
         }
+    }
     }
 }

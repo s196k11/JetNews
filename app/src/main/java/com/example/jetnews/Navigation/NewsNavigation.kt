@@ -26,6 +26,7 @@ import com.example.jetnews.screens.SignUp_SingIn.ResetPassword.ResetPasswordScre
 import com.example.jetnews.screens.SignUp_SingIn.SignIn.SignInScreen
 import com.example.jetnews.screens.SignUp_SingIn.SignUp.SignUpScreen
 import com.example.jetnews.screens.SplashScreen.SplashScreen
+import com.example.jetnews.screens.UserDetail
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -150,6 +151,10 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
 
         composable(JetScreens.HelpScreen.name){
             Help()
+        }
+
+        composable(JetScreens.UserDetailScreen.name){
+            UserDetail(navController = navController, mainViewModel = mainViewModel)
         }
 
         authenticationGraph(navController, mainViewModel, auth)

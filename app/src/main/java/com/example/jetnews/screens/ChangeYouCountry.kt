@@ -119,7 +119,7 @@ fun ChangeYourCountry(navController: NavHostController, mainViewModel: MainViewM
         }
         OutlinedButton(onClick = {
             mainViewModel.selectCountry(user = currentUser, country = s!!)
-            navController.navigate(JetScreens.FillProfileScreen.name){navController.popBackStack()}
+            navController.navigate(JetScreens.SettingScreen.name){navController.popBackStack()}
         },
             modifier = Modifier
                 .fillMaxWidth()

@@ -23,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -45,6 +47,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun FillYourProfileScreen(navController: NavHostController = rememberNavController(),mainViewModel: MainViewModel,auth:FirebaseAuth) {
     val focusManager = LocalFocusManager.current
+    val focusRequest = remember { FocusRequester() }
     val conf = LocalConfiguration.current
     val screenH = conf.screenHeightDp.dp
     val userName = rememberSaveable {mutableStateOf("")}
@@ -73,7 +76,11 @@ fun FillYourProfileScreen(navController: NavHostController = rememberNavControll
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(10.dp)
-                .clickable { }
+                .clickable {
+                    navController.navigate(JetScreens.MainScreen.name){
+                        popUpTo(JetScreens.MainScreen.name)
+                    }
+                }
                 .align(Alignment.TopEnd)
         )
 
@@ -121,11 +128,25 @@ fun FillYourProfileScreen(navController: NavHostController = rememberNavControll
 
             OutlinedTextField(value = aboutMe.value, onValueChange = {aboutMe.value = it}, modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
+                .height(200.dp).focusRequester(focusRequester = focusRequest),
                 placeholder = { Text(text = "About Me") },
                 colors = TextFieldDefaults.outlinedTextFieldColors(backgroundColor = Color.White),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Text),
-                keyboardActions = KeyboardActions(onDone = {})
+                keyboardActions = KeyboardActions(onDone = {
+                    if (userName.value.trim().isNotEmpty() && aboutMe.value.trim().isNotEmpty()){
+                        mainViewModel.sendNewsFireB(user = currentUser,data = UserInfoData(
+                            userName = userName.value.trim(), email = auth.currentUser?.email, country = mainViewModel.country.value.trim() ,
+                            aboutMe = aboutMe.value.toString(), language = "en"))
+                        focusManager.clearFocus(force = true)
+                        navController.navigate(JetScreens.MainScreen.name){
+                            popUpTo(JetScreens.FillProfileScreen.name){
+                                inclusive = true
+                            }
+                        }
+                    }else{
+                        Toast.makeText(context,"Fill All Detail", Toast.LENGTH_SHORT).show()
+                    }
+                })
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -136,7 +157,9 @@ fun FillYourProfileScreen(navController: NavHostController = rememberNavControll
                                              userName = userName.value.trim(), email = auth.currentUser?.email, country = mainViewModel.country.value.trim() ,
                                              aboutMe = aboutMe.value.toString(), language = "en"))
                                          navController.navigate(JetScreens.MainScreen.name){
-                                             popUpTo(JetScreens.MainScreen.name)
+                                             popUpTo(JetScreens.FillProfileScreen.name){
+                                                 inclusive = true
+                                             }
                                          }
                                      }else{
                                          Toast.makeText(context,"Fill All Detail", Toast.LENGTH_SHORT).show()

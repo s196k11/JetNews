@@ -1,6 +1,10 @@
 package com.example.jetnews.screens.HomeAction_search_home_profile.Account.Setting
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,14 +17,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,7 +51,8 @@ fun SettingScreen(
     val localConf = LocalConfiguration.current
     val screenW = localConf.screenWidthDp.dp
 
-    val l = listOf("Edit Profile", "Select Country","Change Password", "Help")
+
+    val l = listOf("Edit Profile", "Select Country","Change Password", "Detail", "Help")
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -86,6 +90,12 @@ fun SettingScreen(
                         if (item == "Help"){
                             navController.navigate(JetScreens.HelpScreen.name)
                         }
+                        if (item == "Detail"){
+                            navController.navigate(JetScreens.UserDetailScreen.name)
+                        }
+                        if (item == "Select Country"){
+                            navController.navigate(JetScreens.ChangeCountryScreen.name)
+                        }
 
 
                     }
@@ -100,14 +110,16 @@ fun SettingScreen(
         Text(text = "Log Out",
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp,
-            modifier = Modifier.align(Alignment.BottomCenter).clickable {
-                auth.signOut()
-                navController.navigate(JetScreens.SingInScreen.name){
-                    popUpTo(JetScreens.SettingScreen.name){
-                        inclusive = true
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .clickable {
+                    auth.signOut()
+                    navController.navigate(JetScreens.SingInScreen.name) {
+                        popUpTo(JetScreens.SettingScreen.name) {
+                            inclusive = true
+                        }
                     }
-                }
-            })
+                })
 
     }
 
