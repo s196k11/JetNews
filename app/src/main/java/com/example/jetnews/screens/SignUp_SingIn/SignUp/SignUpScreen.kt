@@ -183,7 +183,9 @@ fun SignUpScreen(navController: NavHostController,mainViewModel: MainViewModel,a
                     .addOnCompleteListener() {task->
                         if (task.isSuccessful){
                             Log.d("FireBase",task.result.toString())
-                            navController.navigate(JetScreens.SelectCountyScreen.name)
+                            navController.navigate(JetScreens.SelectCountyScreen.name){
+                                navController.popBackStack()
+                            }
                         }else{
                             Log.d("FireBase else",task.exception?.message.toString())
                             if (task.exception?.message.toString() == "The email address is badly formatted."){

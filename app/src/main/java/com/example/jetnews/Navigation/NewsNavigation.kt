@@ -113,21 +113,6 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
         }
 
 
-
-//        composable(JetScreens.DetailScreen.name + "/{title}/{desc}/{imageURL}/{content}",
-//            arguments = listOf(navArgument("title"){type = NavType.StringType},
-//                navArgument("desc"){type = NavType.StringType},
-//                navArgument("imageURL"){type = NavType.StringType},
-//                navArgument("content"){type = NavType.StringType}
-//            )
-//        ){backStackEntry ->
-//            DetailScreen(navController = navController, title = backStackEntry.arguments!!.getString("title")!!,
-//                desc = backStackEntry.arguments!!.getString("desc")!!,
-//                imageURL = backStackEntry.arguments!!.getString("imageURL")!!,
-//                content = backStackEntry.arguments!!.getString("content")!!,
-//                mainViewModel = mainViewModel
-//            )
-//        }
         composable(JetScreens.DetailScreen.name){
             DetailScreen(navController = navController, mainViewModel = mainViewModel,auth = auth)
         }
@@ -165,22 +150,4 @@ fun BottomNavGraph(navController: NavHostController = rememberNavController(),ma
 }
 
 
-//fun NavGraphBuilder.detailGraph(navController: NavHostController){
-//    navigation(startDestination = JetScreens.DetailScreen.name+"/{title}/{desc}/{imageURL}/{content}",route = "detailGraph"){
-//
-//        composable(JetScreens.DetailScreen.name + "/{title}/{desc}/{imageURL}/{content}",
-//            arguments = listOf(navArgument("title"){type = NavType.StringType},
-//                navArgument("desc"){type = NavType.StringType},
-//                navArgument("imageURL"){type = NavType.StringType},
-//                navArgument("content"){type = NavType.StringType}
-//            )
-//        ){backStackEntry ->
-//            DetailScreen(navController = navController, title = backStackEntry.arguments!!.getString("title")!!,
-//                desc = backStackEntry.arguments!!.getString("desc")!!,
-//                imageURL = backStackEntry.arguments!!.getString("imageURL")!!,
-//                content = backStackEntry.arguments!!.getString("content")!!
-//            )
-//        }
-//    }
-//}
 

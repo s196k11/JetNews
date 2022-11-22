@@ -186,7 +186,9 @@ fun SignInScreen(navController: NavController,mainViewModel: MainViewModel,auth:
                                 Log.d("FireBase", task.result.toString())
                                 message.value = ""
                                 navController.navigate(JetScreens.MainScreen.name) {
-                                    popUpTo(JetScreens.MainScreen.name)
+                                    popUpTo(JetScreens.SingInScreen.name){
+                                        inclusive = true
+                                    }
                                 }
                             } else {
                                 Log.d("FireBaseElse", task.exception?.message.toString())
